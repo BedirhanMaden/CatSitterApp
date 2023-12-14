@@ -11,12 +11,32 @@ struct SignInView: View {
     @StateObject private var viewModel=SignInViewModel()
 
     var body: some View {
-        VStack(content: {
+        if(viewModel.isLoaded){
 
-            TextField("User Name", text: $viewModel.userName)
-            TextField("Password", text: $viewModel.password)
-        })
-    }
+            NavigationStack{
+
+                VStack(content: {
+                    TextField("User Name", text: $viewModel.userName)
+                    TextField("Password", text: $viewModel.password)
+                    NavigationLink(destination: HomeView(), isActive: $viewModel.isNextViewActive){
+                        ButtonDS(buttonText: "Sign In", buttonImageName: "test") {
+                            if viewModel.checkIfUserExists(){
+                                viewModel.moveToNextView()
+                            }else{
+                                print("Username or password error")
+                            }
+
+                        }
+                    }
+                })
+            }
+
+        }else{
+                LoadingView().onAppear{
+                    viewModel.loadUserList()
+                }
+            }
+        }
 }
 
 #Preview {
